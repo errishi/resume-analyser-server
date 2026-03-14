@@ -1,5 +1,5 @@
 import express from "express";
-import { userLogin, userRegister } from "../controllers/auth.controller.js";
+import { userLogin, userLogout, userRegister } from "../controllers/auth.controller.js";
 const authRouter = express.Router();
 
 /**
@@ -18,5 +18,12 @@ authRouter.post('/register', userRegister);
 
 authRouter.post('/login', userLogin);
 
+/**
+ * @name GET /api/auth/logout
+ * @description logout signin user
+ * @access public
+ */
+
+authRouter.get('/logout', userLogout);
 
 export default authRouter;

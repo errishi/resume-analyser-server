@@ -1,6 +1,7 @@
 import userModel from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import tokenBlacklistModel from '../models/blacklist.model.js';
 
 /**
  * @name userRegisterController
@@ -58,7 +59,7 @@ export const userRegister = async (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({
             success: false,
             message: "Something went wrong!"
@@ -112,4 +113,34 @@ export const userLogin = async (req, res) => {
             username: user.username
         }
     });
+}
+
+/**
+ * @name userLogoutController
+ * @description logout signin user
+ * @access public
+ */
+
+export const userLogout = async (req, res) => {
+    const token = req.cookies.token;
+
+    try {
+        if (token) {
+            await tokenBlacklistModel.create({ token });
+        }
+
+        res.clearCookie("token");
+
+        res.status(200).json({
+            success: true,
+            message: "User logout successfully"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong!"
+        });
+    }
+
 }

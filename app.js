@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import connectToDatabase from './src/config/database.js';
 import authRouter from "./src/routes/auth.route.js";
+import cookieParser from "cookie-parser";
 
 const PORT = process.env.PORT;
 const app = express();
@@ -11,6 +12,7 @@ const app = express();
 connectToDatabase();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get('/', (req,res)=>{
     res.send("Welcome to server!!");
