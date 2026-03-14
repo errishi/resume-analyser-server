@@ -11,51 +11,60 @@ import jwt from 'jsonwebtoken';
 export const userRegister = async (req, res) => {
     const { username, email, password } = req.body;
 
-    if (!username || !email || password) {
-        return res.status(400).json({
-            success: false,
-            message: "Please provide username, email and password"
-        });
-    }
-
-    const isUserAlreadyExist = await userModel.findOne({
-        $or: [{ username }, { email }]
-    });
-
-    if (isUserAlreadyExist) {
-        return res.status(400).json({
-            success: false,
-            message: "Account already exists with this email or username"
-        });
-    }
-
-    const hashPassword = await bcrypt.hash(password, 10);
-
-    const createUser = await userModel.create({
-        username,
-        email,
-        password: hashPassword
-    });
-
-    const secrectKey = process.env.JWT_SECRECT;
-
-    const token = jwt.sign(
-        { id: createUser._id, username: username },
-        secrectKey,
-        { expiresIn: '1d' }
-    );
-
-    res.cookie("token", token);
-
-    res.status(201).json({
-        success: true,
-        message: "Account created successfully!🎉",
-        user: {
-            id: createUser._id,
-            username: createUser.username,
-            email: createUser.email,
+    try {
+        if (!username || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide username, email and password"
+            });
         }
-    });
+
+        const isUserAlreadyExist = await userModel.findOne({
+            $or: [{ username }, { email }]
+        });
+
+        if (isUserAlreadyExist) {
+            return res.status(400).json({
+                success: false,
+                message: "Account already exists with this email or username"
+            });
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        const createUser = await userModel.create({
+            username,
+            email,
+            password: hashPassword
+        });
+
+        const secrectKey = process.env.JWT_SECRECT;
+
+        const token = jwt.sign(
+            { id: createUser._id, username: username },
+            secrectKey,
+            { expiresIn: '1d' }
+        );
+
+        res.cookie("token", token);
+
+        res.status(201).json({
+            success: true,
+            message: "Account created successfully!🎉",
+            user: {
+                id: createUser._id,
+                username: createUser.username,
+                email: createUser.email,
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong!"
+        });
+    }
+
 }
 
 /**
@@ -66,6 +75,8 @@ export const userRegister = async (req, res) => {
 
 export const userLogin = async (req, res) => {
     const { email, password } = req.body;
+
+    const secrectKey = process.env.JWT_SECRECT;
 
     const user = await userModel.findOne({ email });
 
@@ -86,7 +97,7 @@ export const userLogin = async (req, res) => {
     }
 
     const token = jwt.sign(
-        { id: user._id, username: username },
+        { id: user._id, username: user.username },
         secrectKey,
         { expiresIn: '1d' }
     );

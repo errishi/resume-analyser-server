@@ -10,6 +10,8 @@ const app = express();
 
 connectToDatabase();
 
+app.use(express.json());
+
 app.get('/', (req,res)=>{
     res.send("Welcome to server!!");
 });
