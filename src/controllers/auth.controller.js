@@ -144,3 +144,23 @@ export const userLogout = async (req, res) => {
     }
 
 }
+
+/**
+ * @name getUserdetailsControllers
+ * @description get the current logged in user details.
+ * @access private
+ */
+
+export const getUserDetails = async(req,res) => {
+    const user = await userModel.findById(req.user.id);
+
+    res.status(200).json({
+        success: true,
+        message: "User details fetched successfully",
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email
+        }
+    })
+}

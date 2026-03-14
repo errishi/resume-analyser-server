@@ -1,5 +1,6 @@
 import express from "express";
-import { userLogin, userLogout, userRegister } from "../controllers/auth.controller.js";
+import { getUserDetails, userLogin, userLogout, userRegister } from "../controllers/auth.controller.js";
+import { authUser } from "../middlewares/auth.middleware.js";
 const authRouter = express.Router();
 
 /**
@@ -25,5 +26,13 @@ authRouter.post('/login', userLogin);
  */
 
 authRouter.get('/logout', userLogout);
+
+/**
+ * @route GET /api/auth/get-me
+ * @description get the current logged in user details
+ * @access private
+ */
+
+authRouter.get('/get-me', authUser, getUserDetails);
 
 export default authRouter;
