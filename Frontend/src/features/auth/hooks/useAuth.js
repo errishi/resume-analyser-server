@@ -1,6 +1,6 @@
-import { useContext } from "react"
-import { AuthContext } from "../auth.state"
-import { login, logout, register } from "../services/auth.api";
+import { useContext, useEffect } from "react"
+import { AuthContext } from "../auth.context.jsx"
+import { getMe, login, logout, register } from "../services/auth.api";
 
 export const useAuth = () => {
 
@@ -8,41 +8,53 @@ export const useAuth = () => {
     const { user, setUser, loading, setLoading } = context;
 
 
-    const handleLogin = async({email, password}) => {
+    const handleLogin = async ({ email, password }) => {
         setLoading(true);
         try {
-            const data = await login({email, password});
+            const data = await login({ email, password });
             setUser(data.user);
         } catch (err) {
-            
-        }finally{
+
+        } finally {
             setLoading(false);
         }
     }
 
-    const handleRegister = async({username, email, password}) => {
+    const handleRegister = async ({ username, email, password }) => {
         setLoading(true);
         try {
-            const data = await register({username, email, password});
+            const data = await register({ username, email, password });
             setUser(data.user);
         } catch (error) {
-            
-        }finally{
+
+        } finally {
             setLoading(false);
         }
     }
 
-    const handleLogout = async() => {
+    const handleLogout = async () => {
         setLoading(true);
         try {
             const data = await logout();
             setUser(null);
         } catch (err) {
-            
-        }finally{
+
+        } finally {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+
+        const getAndSetUser = async () => {
+            const data = await getMe();
+            setUser(data.user);
+            setLoading(false);
+        }
+
+        getAndSetUser();
+
+    }, []);
 
     return { user, loading, handleLogin, handleLogout, handleRegister };
 }
