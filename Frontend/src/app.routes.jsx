@@ -3,6 +3,7 @@ import Login from './features/auth/pages/Login';
 import Register from './features/auth/pages/Register';
 import { Navigate } from 'react-router';
 import Protected from './features/auth/components/Protected';
+import Home from './features/interview/pages/Home';
 
 const router = createBrowserRouter([
     {
@@ -15,7 +16,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/",
-        element: <Protected><h1>Home page</h1></Protected>
+        element: <Protected><Home /></Protected>
     }
 ]);
 
