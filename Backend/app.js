@@ -6,6 +6,7 @@ import connectToDatabase from './src/config/database.js';
 import authRouter from "./src/routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
+import interviewRouter from "./src/routes/interview.route.js";
 
 const PORT = process.env.PORT;
 const app = express();
@@ -24,6 +25,7 @@ app.get('/', (req,res)=>{
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/interview', interviewRouter);
 
 app.listen(PORT, ()=> {
     console.log(`server is live at port ${PORT}`);
