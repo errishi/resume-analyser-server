@@ -7,22 +7,42 @@ import interviewReportModel from "../models/interviewReport.model.js";
  */
 
 const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse");
+const { PDFParse, VerbosityLevel } = require("pdf-parse");
 
 export const generateInterviewReportController = async(req,res) => {
+    const { selfDescription = "", jobDescription = "" } = req.body;
+    let resumeText = "";
 
-    const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText();
-    const { selfDescription, jobDescription } = req.body;
+    if (req.file?.buffer) {
+        const parser = new PDFParse({
+            data: Uint8Array.from(req.file.buffer),
+            verbosity: VerbosityLevel.ERRORS
+        });
+
+        try {
+            const resumeContent = await parser.getText();
+            resumeText = resumeContent?.text || "";
+        } finally {
+            await parser.destroy();
+        }
+    }
+
+    if (!resumeText.trim() && !selfDescription.trim()) {
+        return res.status(400).json({
+            success: false,
+            message: "Provide either a resume file or self description"
+        });
+    }
 
     const interviewReportByAi = await generateInterviewReport({
-        resume: resumeContent.text,
+        resume: resumeText,
         selfDescription,
         jobDescription
     });
 
     const interviewReport = await interviewReportModel.create({
         user: req.user.id,
-        resume: resumeContent.text,
+        resume: resumeText,
         selfDescription,
         jobDescription,
         ...interviewReportByAi
