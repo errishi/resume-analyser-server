@@ -65,15 +65,31 @@ const Interview = () => {
 
 
     useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId);
-        }
-    }, [interviewId])
+        let mounted = true;
+
+        const loadInterviewReport = async () => {
+            if (!interviewId) {
+                navigate('/', { replace: true });
+                return;
+            }
+
+            const data = await getReportById(interviewId);
+
+            if (mounted && !data) {
+                navigate('/', { replace: true });
+            }
+        };
+
+        loadInterviewReport();
+
+        return () => {
+            mounted = false;
+        };
+    }, [interviewId, navigate])
 
 
 
     if (loading || !report) {
-        navigate('/');
         return (
             <LoadingUI
                 title='Please wait'

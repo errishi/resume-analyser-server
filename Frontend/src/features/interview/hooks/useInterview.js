@@ -39,10 +39,14 @@ export const useInterview = () => {
             const response = await getAllInterviewReports();
             const reportList = response?.reports || [];
             setReports(reportList);
-            toast.success("Interview Report fetched successfully!");
+            toast.success("Interview Report fetched successfully!", {
+                toastId: "fetch-interview-reports-success"
+            });
             return reportList;
         } catch (error) {
-            toast.error(getErrorMessage(error, "Failed to fetch interview reports"));
+            toast.error(getErrorMessage(error, "Failed to fetch interview reports"), {
+                toastId: "fetch-interview-reports-error"
+            });
             return [];
         } finally {
             setLoading(false);
@@ -55,7 +59,9 @@ export const useInterview = () => {
             const response = await getInterviewReportById(interviewId);
             const reportData = response?.interviewReport || null;
             setReport(reportData);
-            toast.success("Interview Report fetched successfully!");
+            toast.success("Interview Report fetched successfully!", {
+                toastId: "fetch-interview-report-success"
+            });
             return reportData;
         } catch (error) {
             toast.error(getErrorMessage(error, "Failed to fetch interview report"), {

@@ -3,6 +3,7 @@ import '../style/home.scss';
 import { useInterview } from '../hooks/useInterview';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
+import LoadingUI from '../../../components/LoadingUI';
 
 const Home = () => {
     const { loading, generateReport } = useInterview();
@@ -14,11 +15,32 @@ const Home = () => {
 
     const handleReportGenerate = async() => {
         const resumeFile = resumeInputRef.current.files[0];
-        const data = await generateReport({selfDescription, jobDescription, resumeFile});
-        if(!data){
-            toast.error("Failed to generate report.");
+
+        if (!jobDescription.trim()) {
+            toast.error("Please enter the target job description.");
+            return;
         }
+
+        if (!resumeFile && !selfDescription.trim()) {
+            toast.error("Please upload a resume or provide self description.");
+            return;
+        }
+
+        const data = await generateReport({selfDescription, jobDescription, resumeFile});
+        if (!data?._id) {
+            return;
+        }
+
         navigate(`/interview/${data._id}`);
+    }
+
+    if (loading) {
+        return (
+            <LoadingUI
+                title='Generating your report'
+                subtitle='Analyzing your profile and creating interview strategy...'
+            />
+        );
     }
 
     return (

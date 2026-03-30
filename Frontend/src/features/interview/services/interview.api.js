@@ -30,7 +30,7 @@ export const generateInterviewReport = async (jobDescription, selfDescription, r
  */
 
 export const getInterviewReportById = async(interviewId) => {
-    const response = await api.get(`/api/report/interview/${interviewId}`);
+    const response = await api.get(`/api/interview/report/${interviewId}`);
 
     return response.data;
 };
@@ -42,5 +42,8 @@ export const getInterviewReportById = async(interviewId) => {
 export const getAllInterviewReports = async() => {
     const response = await api.get(`/api/interview/`);
 
-    return response.data;
+    return {
+        ...response.data,
+        reports: response.data?.reports || response.data?.allInterviewReport || []
+    };
 }
