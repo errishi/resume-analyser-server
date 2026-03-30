@@ -2,6 +2,10 @@ import { createRequire } from "module";
 import generateInterviewReport from "../services/ai.service.js";
 import interviewReportModel from "../models/interviewReport.model.js";
 
+/**
+ * @description generate new interview report on the basis of user self description, resume pdf and job description.
+ */
+
 const require = createRequire(import.meta.url);
 const pdfParse = require("pdf-parse");
 
@@ -31,3 +35,49 @@ export const generateInterviewReportController = async(req,res) => {
     });
 
 }
+
+/**
+ * @description get interview report by interviewId.
+ */
+
+export const getReportByIdController = async(req,res) => {
+    const { interviewId } = req.params;
+
+    const interviewReport = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id });
+
+    if(!interviewReport){
+        return res.status(404).json({
+            success: false,
+            message: "Interview report not found"
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Interview report fetched successfully",
+        interviewReport
+    });
+};
+
+/**
+ * @description get all interview reports of logged in user.
+ */
+
+export const getAllInterviewReport = async(req,res) => {
+    const userId = req.user.id;
+
+    const allInterviewReport = await interviewReportModel.find({ user: userId }).sort({ createdAt: -1 }).select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan");
+
+    if(!allInterviewReport){
+        return res.status(404).json({
+            success: false,
+            message: "Interview reports not found"
+        });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Interview reports fetched successfully",
+        allInterviewReport
+    });
+};
