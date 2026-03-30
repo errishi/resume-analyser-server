@@ -1,7 +1,26 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import '../style/home.scss';
+import { useInterview } from '../hooks/useInterview';
+import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 const Home = () => {
+    const { loading, generateReport } = useInterview();
+    const [jobDescription, setJobDescription] = useState('');
+    const [selfDescription, setSelfDescription] = useState('');
+    const resumeInputRef = useRef();
+
+    const navigate = useNavigate();
+
+    const handleReportGenerate = async() => {
+        const resumeFile = resumeInputRef.current.files[0];
+        const data = await generateReport({selfDescription, jobDescription, resumeFile});
+        if(!data){
+            toast.error("Failed to generate report.");
+        }
+        navigate(`/interview/${data._id}`);
+    }
+
     return (
         <div className='home-page'>
 
@@ -57,7 +76,7 @@ const Home = () => {
                                 </span>
                                 <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
                                 <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
                             </label>
                         </div>
 
@@ -90,7 +109,7 @@ const Home = () => {
                 <div className='interview-card__footer'>
                     <span className='footer-info'>AI-Powered Strategy Generation &bull; Approx 30s</span>
                     <button
-                        // onClick={handleGenerateReport}
+                        onClick={handleReportGenerate}
                         className='generate-btn'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
                         Generate My Interview Strategy

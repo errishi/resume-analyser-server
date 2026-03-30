@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
+import LoadingUI from '../../../components/LoadingUI';
 
 const Register = () => {
 
@@ -13,13 +14,18 @@ const Register = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    await handleRegister({username, email, password});
-    navigate('/');
+    const success = await handleRegister({username, email, password});
+    if (success) {
+      navigate('/');
+    }
   }
 
   if(loading){
     return(
-      <main><h1>loading...</h1></main>
+      <LoadingUI
+        title='Creating your account'
+        subtitle='Setting up your profile and secure session...'
+      />
     )
   }
 

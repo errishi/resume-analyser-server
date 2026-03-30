@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../auth.form.scss';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
+import LoadingUI from '../../../components/LoadingUI';
 
 const Login = () => {
 
@@ -12,15 +13,18 @@ const Login = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    await handleLogin({email, password});
-    navigate('/');
+    const success = await handleLogin({email, password});
+    if (success) {
+      navigate('/');
+    }
   }
 
   if(loading){
     return(
-      <main>
-        <h1>Loading...</h1>
-      </main>
+      <LoadingUI
+        title='Signing you in'
+        subtitle='Verifying your credentials...'
+      />
     )
   }
 

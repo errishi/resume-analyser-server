@@ -1,0 +1,79 @@
+import { useContext } from "react";
+import { generateInterviewReport, getAllInterviewReports, getInterviewReportById } from "../services/interview.api";
+import { InterviewContext } from "../interview.context";
+import { toast } from "react-toastify";
+
+function getErrorMessage(error, fallbackMessage) {
+    return error?.response?.data?.message || fallbackMessage;
+}
+
+export const useInterview = () => {
+
+    const context = useContext(InterviewContext);
+
+    if(!context){
+        throw new Error("useInterview must be used within an interview provider")
+    }
+
+    const {loading, setLoading, report, setReport, reports, setReports} = context;
+
+    const generateReport = async({ selfDescription, jobDescription, resumeFile }) => {
+        setLoading(true);
+        try {
+            const response = await generateInterviewReport(jobDescription, selfDescription, resumeFile);
+
+            setReport(response.interviewReport)
+            toast.success("Interview report generated successfully");
+            return response.interviewReport;
+        } catch (err) {
+            toast.error(getErrorMessage(err, "Failed to generate interview report"));
+            return null;
+        }finally{
+            setLoading(false);
+        }
+    }
+
+    const getReports = async () => {
+        setLoading(true);
+        try {
+            const response = await getAllInterviewReports();
+            const reportList = response?.reports || [];
+            setReports(reportList);
+            toast.success("Interview Report fetched successfully!");
+            return reportList;
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Failed to fetch interview reports"));
+            return [];
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const getReportById = async (interviewId) => {
+        setLoading(true);
+        try {
+            const response = await getInterviewReportById(interviewId);
+            const reportData = response?.interviewReport || null;
+            setReport(reportData);
+            toast.success("Interview Report fetched successfully!");
+            return reportData;
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Failed to fetch interview report"), {
+                toastId: "fetch-interview-report-error"
+            });
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return {
+        loading,
+        report,
+        reports,
+        generateReport,
+        getReports,
+        getReportById,
+    };
+
+}
