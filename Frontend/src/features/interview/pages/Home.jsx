@@ -30,7 +30,6 @@ const Home = () => {
         if (!data?._id) {
             return;
         }
-
         navigate(`/interview/${data._id}`);
     }
 
