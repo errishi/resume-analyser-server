@@ -352,7 +352,7 @@ Generate comprehensive, detailed interview preparation based on the above candid
             behavioralQuestions: FALLBACK_BEHAVIORAL_QUESTIONS,
             skillGaps: FALLBACK_SKILL_GAPS,
             preparationPlan: FALLBACK_PREPARATION_PLAN,
-            title: "Interview Preparation Report (Fallback)"
+            title: "Interview Preparation Report"
         };
     }
 
