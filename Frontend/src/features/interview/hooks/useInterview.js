@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { generateInterviewReport, getAllInterviewReports, getInterviewReportById } from "../services/interview.api";
+import { generateInterviewReport, getAllInterviewReports, getInterviewReportById, downloadInterviewReportPdf } from "../services/interview.api";
 import { InterviewContext } from "../interview.context";
 import { toast } from "react-toastify";
 import { useParams } from "react-router";
@@ -75,6 +75,38 @@ export const useInterview = () => {
         }
     }
 
+    const getResumePdf = async(interviewReportId) => {
+        setLoading(true);
+        try {
+            const pdfBlob = await downloadInterviewReportPdf(interviewReportId);
+            
+            // Create a temporary anchor element for downloading
+            const link = document.createElement('a');
+            const url = window.URL.createObjectURL(new Blob([pdfBlob]));
+            link.href = url;
+            link.download = `resume_${interviewReportId}.pdf`;
+            
+            // Append to body, click, and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up the object URL
+            window.URL.revokeObjectURL(url);
+            
+            toast.success("Resume PDF downloaded successfully", {
+                toastId: "download-resume-pdf-success"
+            });
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Failed to download resume pdf"), {
+                toastId: "download-resume-pdf-error"
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
     useEffect(()=>{
         if(interviewId){
             getReportById(interviewId);
@@ -90,6 +122,7 @@ export const useInterview = () => {
         generateReport,
         getReports,
         getReportById,
+        getResumePdf
     };
 
 }

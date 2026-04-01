@@ -47,3 +47,14 @@ export const getAllInterviewReports = async() => {
         reports: response.data?.reports || response.data?.allInterviewReport || []
     };
 }
+
+/**
+ * @description download interview report pdf by interviewReportId.
+ */
+
+export const downloadInterviewReportPdf = async(interviewReportId) => {
+    const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, {}, {
+        responseType: 'blob'
+    });
+    return response.data;
+}
