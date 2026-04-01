@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { generateInterviewReport, getAllInterviewReports, getInterviewReportById } from "../services/interview.api";
 import { InterviewContext } from "../interview.context";
 import { toast } from "react-toastify";
+import { useParams } from "react-router";
 
 function getErrorMessage(error, fallbackMessage) {
     return error?.response?.data?.message || fallbackMessage;
@@ -10,6 +11,7 @@ function getErrorMessage(error, fallbackMessage) {
 export const useInterview = () => {
 
     const context = useContext(InterviewContext);
+    const { interviewId } = useParams();
 
     if(!context){
         throw new Error("useInterview must be used within an interview provider")
@@ -39,9 +41,9 @@ export const useInterview = () => {
             const response = await getAllInterviewReports();
             const reportList = response?.reports || [];
             setReports(reportList);
-            toast.success("Interview Report fetched successfully!", {
-                toastId: "fetch-interview-reports-success"
-            });
+            // toast.success("Interview Report fetched successfully!", {
+            //     toastId: "fetch-interview-reports-success"
+            // });
             return reportList;
         } catch (error) {
             toast.error(getErrorMessage(error, "Failed to fetch interview reports"), {
@@ -59,9 +61,9 @@ export const useInterview = () => {
             const response = await getInterviewReportById(interviewId);
             const reportData = response?.interviewReport || null;
             setReport(reportData);
-            toast.success("Interview Report fetched successfully!", {
-                toastId: "fetch-interview-report-success"
-            });
+            // toast.success("Interview Report fetched successfully!", {
+            //     toastId: "fetch-interview-report-success"
+            // });
             return reportData;
         } catch (error) {
             toast.error(getErrorMessage(error, "Failed to fetch interview report"), {
@@ -72,6 +74,14 @@ export const useInterview = () => {
             setLoading(false);
         }
     }
+
+    useEffect(()=>{
+        if(interviewId){
+            getReportById(interviewId);
+        }else{
+            getReports();
+        }
+    }, [interviewId]);
 
     return {
         loading,

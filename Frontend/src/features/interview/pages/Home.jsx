@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import LoadingUI from '../../../components/LoadingUI';
 
 const Home = () => {
-    const { loading, generateReport } = useInterview();
+    const { loading, generateReport, reports } = useInterview();
     const [jobDescription, setJobDescription] = useState('');
     const [selfDescription, setSelfDescription] = useState('');
     const resumeInputRef = useRef();
@@ -139,20 +139,25 @@ const Home = () => {
             </div>
 
             {/* Recent Reports List */}
-            {/* {reports.length > 0 && (
-                <section className='recent-reports'>
+            {reports.length > 0 && (
+                <div className='recent-reports'>
                     <h2>My Recent Interview Plans</h2>
-                    <ul className='reports-list'>
+                    <ul className='report-list'>
                         {reports.map(report => (
                             <li key={report._id} className='report-item' onClick={() => navigate(`/interview/${report._id}`)}>
-                                <h3>{report.title || 'Untitled Position'}</h3>
-                                <p className='report-meta'>Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
-                                <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
+                                <div className='report-item__info'>
+                                    <h3>{report.title || 'Untitled Job'}</h3>
+                                    <p>Generated on {new Date(report.createdAt).toLocaleString()}</p>
+                                    <p className={`match-score ${report.matchScore >= 80 ? 'score--high' : report.matchScore >= 60 ? 'score--mid' : 'score--low'}`}>Match Score: {report.matchScore}%</p>
+                                </div>
+                                <span className='report-item__icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
+                                </span>
                             </li>
                         ))}
                     </ul>
-                </section>
-            )} */}
+                </div>
+            )}
 
             {/* Page Footer */}
             <footer className='page-footer'>
