@@ -472,8 +472,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 **Rishikesh Singh**
 
-- GitHub: [@yourgithub](https://github.com/yourgithub)
-- Email: your.email@example.com
+- GitHub: [@errishi](https://github.com/errishi)
 
 ---
 
