@@ -23,6 +23,100 @@ function getAiClient() {
     });
 }
 
+const FALLBACK_TECHNICAL_QUESTIONS = [
+    {
+        question: "Can you walk me through a project you're proud of? What was your role, and what was the impact?",
+        intention: "To assess communication skills, ownership, and ability to articulate technical contributions.",
+        answer: "Choose a recent, relevant project. Use the STAR method (Situation, Task, Action, Result). Start with the project's goal, describe your specific responsibilities, detail the actions you took (mentioning technologies used), and conclude with the positive outcomes or impact of your work. Quantify results if possible (e.g., 'improved performance by 20%')."
+    },
+    {
+        question: "How do you stay updated with new technologies and industry trends?",
+        intention: "To gauge proactiveness, passion for technology, and commitment to continuous learning.",
+        answer: "Mention a mix of resources like blogs (e.g., Martin Fowler, company engineering blogs), newsletters (e.g., TLDR, JavaScript Weekly), podcasts, and online courses. Give a recent example of a new technology you learned about and how you experimented with it (e.g., a small side project)."
+    },
+    {
+        question: "Describe a challenging technical problem you faced and how you solved it.",
+        intention: "To evaluate problem-solving skills, technical depth, and resilience.",
+        answer: "Clearly define the problem and its complexity. Explain the process of investigating and diagnosing the issue. Discuss the different solutions you considered and why you chose the final one. Conclude with the resolution and any lessons learned from the experience."
+    },
+    {
+        question: "What are RESTful APIs and why are they important?",
+        intention: "To check foundational knowledge of web services and architecture.",
+        answer: "Explain that REST (Representational State Transfer) is an architectural style for designing networked applications. Key principles include statelessness, client-server architecture, and a uniform interface. Mention common HTTP methods (GET, POST, PUT, DELETE) and how they correspond to CRUD operations. Emphasize that they are important for scalability, flexibility, and interoperability between different systems on the web."
+    },
+    {
+        question: "Explain the difference between `let`, `const`, and `var` in JavaScript.",
+        intention: "To assess understanding of core JavaScript concepts and variable scoping.",
+        answer: "Explain that `var` is function-scoped and can be re-declared and updated, which can lead to bugs. `let` is block-scoped, can be updated but not re-declared within the same scope. `const` is also block-scoped, but it cannot be updated or re-declared, making it ideal for values that should not change."
+    }
+];
+
+const FALLBACK_BEHAVIORAL_QUESTIONS = [
+    {
+        question: "Tell me about a time you had a conflict with a coworker. How did you handle it?",
+        intention: "To assess conflict resolution skills, empathy, and professionalism.",
+        answer: "Focus on a professional disagreement, not a personal one. Explain the situation and the different perspectives. Describe the steps you took to understand their viewpoint and work towards a mutually agreeable solution. Emphasize collaboration and a positive outcome."
+    },
+    {
+        question: "How do you handle tight deadlines and high-pressure situations?",
+        intention: "To evaluate time management, prioritization, and ability to perform under pressure.",
+        answer: "Provide an example of a high-pressure project. Explain how you prioritize tasks, manage your time effectively (e.g., breaking down work), and communicate with stakeholders about progress and potential risks. Show that you can stay calm and focused."
+    },
+    {
+        question: "Describe a time you had to learn a new skill quickly for a project.",
+        intention: "To gauge adaptability and a willingness to learn.",
+        answer: "Choose a real example where you had to ramp up on a new technology or methodology. Describe the situation, the skill you needed to learn, the resources you used (documentation, tutorials, pair programming), and how you successfully applied the new skill to the project. This shows you are a proactive and resourceful learner."
+    },
+    {
+        question: "Why are you interested in this specific role and our company?",
+        intention: "To see if you have done your research and are genuinely interested.",
+        answer: "Connect your skills and career goals to the job description. Mention specific aspects of the company that appeal to you, such as their products, culture, or technology stack. This shows you are not just looking for any job, but are specifically interested in this opportunity."
+    }
+];
+
+const FALLBACK_PREPARATION_PLAN = [
+    {
+        day: 1,
+        focus: "Fundamentals & Company Research",
+        tasks: [
+            "Review core concepts related to the job description (e.g., data structures, key frameworks).",
+            "Thoroughly research the company: its products, mission, and recent news.",
+            "Prepare your answer for 'Tell me about yourself', tailoring it to the role."
+        ]
+    },
+    {
+        day: 2,
+        focus: "Technical Deep Dive & Practice",
+        tasks: [
+            "Solve 3-5 practice problems related to the company's domain (e.g., on LeetCode or HackerRank).",
+            "Review one of your key projects and be prepared to discuss its architecture and your role in detail.",
+            "Practice explaining a complex technical concept in simple terms."
+        ]
+    },
+    {
+        day: 3,
+        focus: "Behavioral & Final Polish",
+        tasks: [
+            "Prepare 3-4 stories using the STAR method for common behavioral questions.",
+            "Draft 3-5 insightful questions to ask the interviewer about the role, team, or company.",
+            "Do a full mock interview with a peer or using an online platform."
+        ]
+    }
+];
+
+const FALLBACK_SKILL_GAPS = [
+    {
+        skill: "Specific Framework Experience",
+        severity: "medium",
+        description: "While you have foundational knowledge, gaining deeper experience in the specific frameworks mentioned in the job description (e.g., React, Node.js) would be beneficial."
+    },
+    {
+        skill: "Cloud Technologies",
+        severity: "low",
+        description: "Familiarity with cloud platforms like AWS, Azure, or GCP is increasingly valuable. Consider exploring their basic services."
+    }
+];
+
 
 const interviewReportSchema = z.object({
     matchScore: z.number().min(0).max(100).describe("A score between 0 and 100 indicating how well the candidate's profile matches the job describe"),
@@ -76,7 +170,29 @@ function parseReportFromResponse(response) {
         throw new Error(`AI response did not match schema: ${validated.error.message}`);
     }
 
-    return validated.data;
+    const report = validated.data;
+
+    // Ensure minimum number of questions by adding fallbacks if necessary
+    if (report.technicalQuestions.length < 3) {
+        const needed = 3 - report.technicalQuestions.length;
+        report.technicalQuestions.push(...FALLBACK_TECHNICAL_QUESTIONS.slice(0, needed));
+    }
+
+    if (report.behavioralQuestions.length < 2) {
+        const needed = 2 - report.behavioralQuestions.length;
+        report.behavioralQuestions.push(...FALLBACK_BEHAVIORAL_QUESTIONS.slice(0, needed));
+    }
+
+    if (report.preparationPlan.length < 3) {
+        const needed = 3 - report.preparationPlan.length;
+        report.preparationPlan.push(...FALLBACK_PREPARATION_PLAN.slice(0, needed));
+    }
+
+    if (report.skillGaps.length < 1) {
+        report.skillGaps.push(...FALLBACK_SKILL_GAPS);
+    }
+
+    return report;
 }
 
 function toPlainText(value) {
@@ -225,6 +341,19 @@ Generate comprehensive, detailed interview preparation based on the above candid
         } catch (error) {
             lastError = error;
         }
+    }
+
+    // If all models fail, return a report with fallback questions
+    if (lastError) {
+        console.error("AI report generation failed for all models, returning fallback report.", lastError);
+        return {
+            matchScore: computedMatchScore,
+            technicalQuestions: FALLBACK_TECHNICAL_QUESTIONS,
+            behavioralQuestions: FALLBACK_BEHAVIORAL_QUESTIONS,
+            skillGaps: FALLBACK_SKILL_GAPS,
+            preparationPlan: FALLBACK_PREPARATION_PLAN,
+            title: "Interview Preparation Report (Fallback)"
+        };
     }
 
     const errorMessage = lastError?.message || "Unknown error while generating interview report";
