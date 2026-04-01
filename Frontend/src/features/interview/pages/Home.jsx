@@ -9,6 +9,8 @@ const Home = () => {
     const { loading, generateReport, reports } = useInterview();
     const [jobDescription, setJobDescription] = useState('');
     const [selfDescription, setSelfDescription] = useState('');
+    const [jobDescriptionCharCount, setJobDescriptionCharCount] = useState(0);
+    const [selfDescriptionCharCount, setSelfDescriptionCharCount] = useState(0);
     const resumeInputRef = useRef();
 
     const navigate = useNavigate();
@@ -65,12 +67,15 @@ const Home = () => {
                             <span className='badge badge--required'>Required</span>
                         </div>
                         <textarea
-                            onChange={(e) => { setJobDescription(e.target.value) }}
+                            onChange={(e) => { 
+                                setJobDescription(e.target.value);
+                                setJobDescriptionCharCount(e.target.value.length);
+                            }}
                             className='panel__textarea'
                             placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
                             maxLength={5000}
                         />
-                        <div className='char-counter'>0 / 5000 chars</div>
+                        <div className='char-counter'>{jobDescriptionCharCount} / 5000 chars</div>
                     </div>
 
                     {/* Vertical Divider */}
@@ -108,12 +113,16 @@ const Home = () => {
                         <div className='self-description'>
                             <label className='section-label' htmlFor='selfDescription'>Quick Self-Description</label>
                             <textarea
-                                onChange={(e) => { setSelfDescription(e.target.value) }}
+                                onChange={(e) => { 
+                                    setSelfDescription(e.target.value);
+                                    setSelfDescriptionCharCount(e.target.value.length);
+                                }}
                                 id='selfDescription'
                                 name='selfDescription'
                                 className='panel__textarea panel__textarea--short'
                                 placeholder="Briefly describe your experience, key skills, and years of experience if you don't have a resume handy..."
                             />
+                            <div className='char-counter'>{selfDescriptionCharCount} / 5000 chars</div>
                         </div>
 
                         {/* Info Box */}
