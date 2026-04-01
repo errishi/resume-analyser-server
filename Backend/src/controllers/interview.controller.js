@@ -1,5 +1,5 @@
 import { createRequire } from "module";
-import generateInterviewReport from "../services/ai.service.js";
+import generateInterviewReport, { generateResumePdf } from "../services/ai.service.js";
 import interviewReportModel from "../models/interviewReport.model.js";
 
 /**
@@ -101,3 +101,27 @@ export const getAllInterviewReport = async(req,res) => {
         allInterviewReport
     });
 };
+
+/**
+ * @description generate resume pdf from interview report.
+ */
+
+export const generateResumePdfController = async(req,res) => {
+    const { interviewReportId } = req.params;
+    const interviewReport = await interviewReportModel.findById(interviewReportId);
+
+    if(!interviewReport){
+        return res.status(404).json({
+            success: false,
+            message: "Interview report not found"
+        });
+    }
+
+    const { resume, selfDescription, jobDescription } = interviewReport;
+    const pdfBuffer = await generateResumePdf({ resume, selfDescription, jobDescription });
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=resume_${interviewReportId}.pdf`);
+
+    res.send(pdfBuffer);
+}
