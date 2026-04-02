@@ -161,8 +161,6 @@ MONGODB_URI=
 NVIDIA_API_KEY=
 
 # JWT
-JWT_SECRET=your_secure_jwt_secret_key
-JWT_EXPIRY=7d
 
 # CORS
 CORS_ORIGIN=http://localhost:5173
@@ -220,24 +218,11 @@ NODE_ENV=production node app.js
 #### Register User
 ```http
 POST /api/auth/register
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "securePassword123",
-  "name": "John Doe"
-}
 ```
 
 #### Login User
 ```http
 POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "securePassword123"
-}
 ```
 
 **Response:**
