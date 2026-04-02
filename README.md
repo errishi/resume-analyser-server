@@ -225,18 +225,6 @@ POST /api/auth/register
 POST /api/auth/login
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "token": "jwt_token_here",
-  "user": {
-    "id": "user_id",
-    "email": "user@example.com",
-    "name": "John Doe"
-  }
-}
-```
 
 #### Logout User
 ```http
@@ -244,37 +232,12 @@ POST /api/auth/logout
 Authorization: Bearer {token}
 ```
 
----
 
 ### Interview Endpoints
 
 #### Generate Interview Report
-```http
-POST /api/interview/generate-report
-Content-Type: multipart/form-data
-Authorization: Bearer {token}
 
-Parameters:
-- resumeFile: PDF file (form data)
-- selfDescription: string
-- jobDescription: string
-```
 
-**Response:**
-```json
-{
-  "success": true,
-  "interviewReport": {
-    "_id": "report_id",
-    "matchScore": 78,
-    "title": "Senior Full Stack Developer",
-    "technicalQuestions": [...],
-    "behavioralQuestions": [...],
-    "skillGaps": [...],
-    "preparationPlan": [...]
-  }
-}
-```
 
 #### Get All Interview Reports
 ```http
@@ -312,46 +275,6 @@ Authorization: Bearer {token}
 
 ---
 
-## 📊 Database Models
-
-### User Model
-```javascript
-{
-  email: String (unique),
-  password: String (hashed),
-  name: String,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-### Interview Report Model
-```javascript
-{
-  userId: ObjectId (ref: User),
-  resume: String,
-  selfDescription: String,
-  jobDescription: String,
-  matchScore: Number (0-100),
-  title: String,
-  technicalQuestions: Array,
-  behavioralQuestions: Array,
-  skillGaps: Array,
-  preparationPlan: Array,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-### Blacklist Model
-```javascript
-{
-  token: String (unique),
-  expiresAt: Date
-}
-```
-
----
 
 ## 🔒 Security Features
 
@@ -374,14 +297,6 @@ Authorization: Bearer {token}
 - **AI Enhancement** - Content improved using NVIDIA AI while preserving original data
 - **Link Support** - LinkedIn and GitHub URLs in header
 - **A4 Optimized** - Perfect page fit with optimized spacing
-
-### Font Sizes
-- Name: 24px
-- Job Title: 11px
-- Contact Info: 9px
-- Section Headers: 11px
-- Body Text: 10px
-- Details: 9px
 
 ---
 
@@ -469,14 +384,6 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Support
-
-For issues, questions, or suggestions:
-- Open an issue on GitHub
-- Contact the author directly
-- Check existing documentation
-
----
 
 **Last Updated:** April 2, 2026
 
