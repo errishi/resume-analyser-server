@@ -154,12 +154,11 @@ PORT=5000
 NODE_ENV=development
 
 # Database
-MONGODB_URI=mongodb://localhost:27017/genai-resume-analyzer
+MONGODB_URI=
 # OR use MongoDB Atlas
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/genai-resume-analyzer
-
+MONGODB_URI=
 # NVIDIA API
-NVIDIA_API_KEY=your_nvidia_api_key_here
+NVIDIA_API_KEY=
 
 # JWT
 JWT_SECRET=your_secure_jwt_secret_key
